@@ -1,74 +1,102 @@
+import { gql, useMutation } from "@apollo/client";
 import React, { useRef, useState } from "react";
 import Header from "../component/Header";
 import Lolly from "../component/Lolly";
 
+const GETDATA = gql`
+{
+    hello    
+}
+`
+const createLollyMutation = gql`
+    mutation createLolly($recipientName: String!,$message: String!,$senderName: String!,$flavourTop: String!,$flavourMiddle: String!,$flavourBottom: String!){
+        createLolly(recipientName: $recipientName,message: $message,senderName: $senderName,flavourTop: $flavourTop,flavourMiddle: $flavourMiddle,flavourBottom: $flavourBottom)
+        message
+        lollyPath
+    }
+`
+
+
+
 export default function CreateNew() {
-    const [color1,setColor1] = useState("#d52358")
-    const [color2,setColor2] = useState("#deaa43")
-    const [color3,setColor3] = useState("#e95946")
-    const nameRef = useRef()
+    const [flavourTop, setFlavourTop] = useState("#d52358")
+    const [flavourMiddle, setFlavourMiddle] = useState("#deaa43")
+    const [flavourBottom, setFlavourBottom] = useState("#e95946")
+    const recipientNameRef = useRef()
     const messageRef = useRef()
     const senderRef = useRef()
-    const submit =()=>{
+
+    const [createLolly] = useMutation(createLollyMutation)
+    const submit = async() => {
         console.log('clicked')
-        console.log('color1',color1)
-        console.log('color2',color2)
-        console.log('color3',color3)
-        console.log('nameref',nameRef.current.value)
-        console.log('message',messageRef.current.value)
-        console.log('sender',senderRef.current.value)
+        console.log('color1', flavourTop)
+       console.log('sender', senderRef.current.value)
+      
+       const result = await createLolly({
+            variables: {
+                recipientName: recipientNameRef.current.value,
+                message: messageRef.current.value,
+                senderName: senderRef.current.value,
+                flavourTop: flavourTop,
+                flavourMiddle: flavourMiddle,
+                flavourBottom: flavourBottom
+            }
+        })
+        console.log('results',result)
     }
     return (
         <div className="container">
+
+
             <Header />
             <div className="lollyForm">
                 <div>
                     <Lolly
-                        fillLollyTop={color1}
-                        fillLollyMiddle={color2}
-                        fillLollyBottom={color3}
+                        fillLollyTop={flavourTop}
+                        fillLollyMiddle={flavourMiddle}
+                        fillLollyBottom={flavourBottom}
                     />
                 </div>
                 <div className="lollyFlavor">
                     <label htmlFor="flavorTop" className="colorPickerLabel">
                         <input
                             type="color"
-                            value={color1}
+                            value={flavourTop}
                             className="colorPicker"
                             id="flavorTop"
                             name="flavorTop"
-                            onChange={(e)=>setColor1(e.target.value)}
+                            onChange={(e) => setFlavourTop(e.target.value)}
                         />
                     </label>
                     <label htmlFor="flavorTop" className="colorPickerLabel">
                         <input
                             type="color"
-                            value={color2}
+                            value={flavourMiddle}
                             className="colorPicker"
                             id="flavorTop"
                             name="flavorTop"
-                            onChange={(e)=>setColor2(e.target.value)}
+                            onChange={(e) => setFlavourMiddle(e.target.value)}
                         />
                     </label>
                     <label htmlFor="flavorTop" className="colorPickerLabel">
                         <input
                             type="color"
-                            value={color3}
+                            value={flavourBottom}
                             className="colorPicker"
                             id="flavorTop"
                             name="flavorTop"
-                            onChange={(e)=>setColor3(e.target.value)}
+                            onChange={(e) => setFlavourBottom(e.target.value)}
                         />
                     </label>
                 </div>
                 <div>
                     <div className="lollyFrom">
                         <label htmlFor="recipientName">To</label>
-                        <input type="text" name="recipientName" id="recipientName" ref={nameRef} />
+                        <input type="text" name="recipientName" id="recipientName" ref={recipientNameRef} />
                         <label htmlFor="recipientName">Message</label>
-                        <textarea rows="15" columns="30" ref={messageRef}></textarea>
+                        <textarea rows="15" columns="30" ref={messageRef} />
                         <label htmlFor="recipientName">From</label>
-                        <input type="text" ref={senderRef} name="recipientName" id="recipientName" />
+                        <input type="text" ref={senderRef} name="senderName" id="recipientName" />
                     </div>
                     <input onClick={submit} type="button" value="click me" />
                 </div>
