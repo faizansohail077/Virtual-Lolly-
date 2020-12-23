@@ -9,13 +9,15 @@ const GETDATA = gql`
 }
 `
 const createLollyMutation = gql`
-    mutation createLolly($recipientName: String!,$message: String!,$senderName: String!,$flavourTop: String!,$flavourMiddle: String!,$flavourBottom: String!){
-        createLolly(recipientName: $recipientName,message: $message,senderName: $senderName,flavourTop: $flavourTop,flavourMiddle: $flavourMiddle,flavourBottom: $flavourBottom)
-        message
-        lollyPath
+mutation createLolly($recipientName:String!,$senderName:String!,$flavourTop:String!,$flavourMiddle:String!,$flavourBottom:String!,$message:String!){
+    createLolly(recipientName:$recipientName,senderName:$senderName,flavourTop:$flavourTop,flavourMiddle:$flavourMiddle,flavourBottom:$flavourBottom,message:$message){
+      lollyPath
+      senderName
+      recipientName
+      message
+    }
     }
 `
-
 
 
 export default function CreateNew() {
@@ -27,12 +29,12 @@ export default function CreateNew() {
     const senderRef = useRef()
 
     const [createLolly] = useMutation(createLollyMutation)
-    const submit = async() => {
+    const submit = async () => {
         console.log('clicked')
         console.log('color1', flavourTop)
-       console.log('sender', senderRef.current.value)
-      
-       const result = await createLolly({
+        console.log('sender', senderRef.current.value)
+
+        const result = await createLolly({
             variables: {
                 recipientName: recipientNameRef.current.value,
                 message: messageRef.current.value,
@@ -42,7 +44,7 @@ export default function CreateNew() {
                 flavourBottom: flavourBottom
             }
         })
-        console.log('results',result)
+        console.log('results', result)
     }
     return (
         <div className="container">
